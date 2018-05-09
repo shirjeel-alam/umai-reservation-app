@@ -1,6 +1,7 @@
 class ReservationsController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :load_restaurant
+  before_action :set_default_request_format
 
   def index
     @reservations = @restaurant.reservations
