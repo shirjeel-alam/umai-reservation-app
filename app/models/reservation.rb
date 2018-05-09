@@ -10,6 +10,8 @@ class Reservation < ApplicationRecord
   validate :reservation_at_lies_in_shift, if: ->(r) { r.reservation_at.present? && r.shift.present? && (r.reservation_at_changed? || r.shift_id_changed?) }
   validate :table_and_shift_belong_to_same_restaurant, if: ->(r) { r.table.present? && r.shift.present? && (r.table_id_changed? || r.shift_id_changed?) }
 
+  after_create_commit :send_emails
+
   def table_minimum
     table.minimum_capacity
   end
@@ -19,6 +21,11 @@ class Reservation < ApplicationRecord
   end
 
   private
+
+  def send_emails
+    ReservationMailer.send_guest_reservation_details(guest, self).deliver_now
+    ReservationMailer.send_restaurant_reservation_details(guest, self).deliver_now
+  end
 
   def reservation_at_lies_in_shift
     seconds_since_midnight = reservation_at.to_i % 86400

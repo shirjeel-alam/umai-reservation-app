@@ -1,0 +1,15 @@
+<div>New reservation has been created</div>
+</br>
+<div>Guest details are as follows:</div>
+<ul>
+<li>Name: <%= @guest.name %></li>
+<li>Email: <%= @guest.email %></li>
+</ul>
+</br>
+<div>Reservation details are as follows:</div>
+<ul>
+<li>Table: <%= @reservation.table.name %></li>
+<li>Shift: <%= "#{@reservation.shift.name} (#{@reservation.shift.start_at / 3600} - #{@reservation.shift.end_at / 3600})" %></li>
+<li>Reservation Time: <%= @reservation.reservation_at.to_s(:long) %></li>
+<li>Guest Count: <%= @reservation.guest_count %></li>
+</ul>

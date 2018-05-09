@@ -31,4 +31,14 @@ class ReservationTest < ActiveSupport::TestCase
     assert reservation.valid?
     assert reservation.save
   end
+
+  test 'send emails after creation' do
+    ActionMailer::Base.deliveries = []
+    reservation = create(:reservation, restaurant: @restaurant, table: @tables[0], shift: @shift, guest: @guests[0], guest_count: 2, reservation_at: DateTime.parse('2018-05-02T10:00:00Z'))
+    emails = ActionMailer::Base.deliveries
+    assert_equal 2, emails.length
+    assert_same_elements ['reservations@umai.com', 'reservations@umai.com'], emails.map(&:from).flatten
+    assert_same_elements [@guests[0].email, @restaurant.email], emails.map(&:to).flatten
+    assert_same_elements ["Reservation Details for #{@restaurant.name}", "Reservation Details for #{@guests[0].name}"], emails.map(&:subject).flatten
+  end
 end
